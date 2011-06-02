@@ -31,14 +31,15 @@ if($vojo == ""){ //<------------------ CXEFA PAGXO
     $cxio = Pagxo::akiruCxiujn();
     $enhavo = faruListon($cxio);
     
-}elseif( false){
+}elseif( false){ //<------------------ AGORDOJ
     
 }else{ //<---------------------------- ALIAJ PAGXO
-    //akiru pagxon per vojo(normale) aux per id (du post, cxar nomo povis sxangxi) aux priparu novan
+    //akiru pagxon per vojo(normale) aux per id (akirita trans la post, cxar nomo povis sxangxi) aux priparu novan
     try{
         $pagxo = new Pagxo( isset($_POST["pagxo_id"])?$_POST["pagxo_id"]:$vojo );
         
     }catch(PagxoException $e){
+        //se oni okazais aliaeraro ol ke pagxo neekzistas nedauxrigu
         if($e->getCode() != Pagxo::NEEKZISTAS) throw $e;
         $pagxo = new Pagxo();
         $vojeroj = explode("/",$vojo);
@@ -102,6 +103,9 @@ header('Content-Type: text/html; charset=utf-8');
 
 <?
 
+
+/*******************************************/
+// transkribu debug informaron plenigitan per Konktilo.php/notormdebug  
 $i=0;
 echo "<table style='clear:both;'>";
 foreach($DB_DEBUG as $paro){
