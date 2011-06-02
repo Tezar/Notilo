@@ -1,0 +1,3 @@
+#neniu povasviziti tiuncxi dosieron pere de www
+Order Deny,Allow
+Deny from All
