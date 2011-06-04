@@ -43,7 +43,7 @@ if($vojo == ""){ //<------------------ CXEFA PAGXO
         if($e->getCode() != Pagxo::NEEKZISTAS) throw $e;
         $pagxo = new Pagxo();
         $vojeroj = explode("/",$vojo);
-        $pagxo["titolo"] = array_pop($vojeroj);
+        $pagxo["nomo"] = array_pop($vojeroj);
         $pagxo["teksto"] = "Nova pagxo";
         
         if(!empty($vojeroj)){
@@ -56,11 +56,17 @@ if($vojo == ""){ //<------------------ CXEFA PAGXO
         //todo: redoni json nur se estas AJAX demando
         switch($_POST["ago"]){
             case "konservi":
-                        $pagxo["teksto"] = $_POST["teksto"];
+                        switch($_POST["celo"]){
+                            case "nomo": $pagxo["nomo"] = strip_tags($_POST["enhavo"]); break;
+                            case "teksto": $pagxo["teksto"] = $_POST["enhavo"]; break; 
+                            default: die("chyba");
+                        }
+                        
                         $pagxo->konservu();
                        
+                        //todo: cxu ni vere bezonas ajax/post? nesuficxas nur ajax?
                         if($_SERVER["HTTP_X_REQUESTED_WITH"] == 'XMLHttpRequest'){//<- demandita per AJAX
-                            echo json_encode( Array("teksto"=>$_POST["teksto"]));
+                            echo json_encode( Array("nomo"=>$pagxo["nomo"], "teksto"=>$pagxo["teksto"], "debug" => kreuDebugTablon($DB_DEBUG) )); 
                             exit;    
                         }
                         break;
@@ -78,7 +84,9 @@ if($vojo == ""){ //<------------------ CXEFA PAGXO
         
     }
     
-    $enhavo = "<div id='ujo'>{$pagxo["teksto"]}</div>";
+    $enhavo = "<div id='nomo'><h1>{$pagxo["nomo"]}</h1></div>";
+    $enhavo .= "<div id='teksto'>{$pagxo["teksto"]}sdfasf<br/></div>";
+    $enhavo .= "<input type='hidden' id='pagxo_id' value='{$pagxo["id"]}' />";
     
 }
 
@@ -90,12 +98,13 @@ header('Content-Type: text/html; charset=utf-8');
 <head>
         <meta http-equiv="content-type" content="text/html; charset=utf-8" />
         <meta name="robots" content="noindex, nofollow" />
-        <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.4/jquery.min.js"></script>
+        <!-- <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.4/jquery.min.js"></script> -->
+        <script type="text/javascript" src="/jquery.min.js"></script>
         <script type="text/javascript" src="/ajax.js"></script>
 
         <link rel="stylesheet" type="text/css" href="/styloj.css" /> 
 
-        <title><?= $titolo ?></title>
+        <title><?= $nomo ?></title>
 </head>
 <body>
 <div class="eta"><?= $_SERVER["REMOTE_ADDR"] ?></div>
@@ -105,14 +114,12 @@ header('Content-Type: text/html; charset=utf-8');
 
 
 /*******************************************/
-// transkribu debug informaron plenigitan per Konktilo.php/notormdebug  
+// transkribu debug informaron plenigitan per Konktilo.php/notormdebug
+  
 $i=0;
-echo "<table style='clear:both;'>";
-foreach($DB_DEBUG as $paro){
-    list($demando,$par) = $paro;
-    echo "<tr><td>".(++$i)."</td><td>$demando</td><td>".var_export($par,true)."</td></tr>";
-}
-echo "</table>";
+echo "<hr /><div id='debug'><table style='clear:both;'>";
+echo kreuDebugTablon($DB_DEBUG);
+echo "</div>";
 ?>
 </body>
 </html>

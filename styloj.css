@@ -10,20 +10,19 @@ body{
     font-family: Verdana,"Geneva CE",lucida,sans-serif;
     font-size: 13px;
 }
-
-textarea{
-    float:left;
-    width:49%;
-    height:90%;
+/*
+div.redaktebla{
     background:#F2F2F2;
     border:1px solid gray;
     padding:3px
+}*/
+
+div.redaktebla:focus {
+    outline: none;
 }
+
     
 div#ujo{
-    float:right;
-    width:49%;    
-     height:90%;
      overflow: auto;    
 }  
 

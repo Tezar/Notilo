@@ -35,3 +35,16 @@ function faruListon($datoj){
     }
     return $redono .= "</ul>\n";
 };
+
+
+function kreuDebugTablon($dataro){
+    $redono = "<table style='clear:both; width:100%;'>";
+    $i=0;
+    foreach($dataro as $paro){
+        list($demando,$par) = $paro;
+        $redono .= "<tr><td>".(++$i)."</td><td>$demando</td><td>".var_export($par,true)."</td></tr>";
+    }
+    return $redono .= "</table>";
+}
+
+

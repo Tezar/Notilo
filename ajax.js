@@ -1,52 +1,56 @@
-    function texy() {
-		$.post(window.location.href, { teksto: $('#teksto').val(),ago: "konservi" }, 
-                function(data){
-                     $('#ujo').fadeTo(100, 0.01, function () {
-                                        $(this).html(data).fadeTo(100, 1);
-                                    });
-                     
-                    data = $.parseJSON(data);   
-                                     
-                    if( data.titolo ){
-                        $('#titolo').html( data.titolo );
-                        document.title = data.titolo;
-                    }
+$(function(){
+            $.ajaxSetup({timeout: 4000});   
+            $.tempolimo = 0;
+    
+    		
+            $("#nomo, #teksto").keydown(traktilo).keypress(traktilo);
+            $("#nomo, #teksto").dblclick(function(){
+                            $(this).attr("contentEditable",'true'); 
+                            })
+            });
             
-                    if(data.teksto){
-                        $('#ujo').fadeTo(100, 0.01, function () {
-                                        $(this).html(data.teksto).fadeTo(100, 1);
-                                    });    
-                    }
-    			     
-                    if( data.lasta ){
-                        $('#lasta').html( data.lasta);    
-                    }
-        		}
-        );
-	}
 
-	var traktilo = function(event) {
-			clearTimeout($.tempolimo);
+/****************************************************/
+var traktilo = function(event) {
+                    if (!event) event = window.event;
+                   	if (event.target) elemento = event.target;
+                  	else if (event.srcElement) elemento = event.srcElement;
+
+    
+    
+            		clearTimeout($.tempolimo);
+                    
+            		$.tempolimo = setTimeout( function(){ agu(elemento); }, 800);
+            		return true;
+            	};
+
+/****************************************************/
             
-			$.tempolimo = setTimeout(texy, 800);
-			return true;
-		};
-
-	$(function(){
-        $.ajaxSetup({timeout: 4000});   
-        $.tempolimo = 0;
-
-		$('#teksto').focus().keydown(traktilo).keypress(traktilo);
+function agu(sender) {
+	$.post(window.location.href, {"celo":(sender.id) ,"pagxo_id": $("#pagxo_id").val(), "enhavo": $(sender).html(),ago: "konservi" }, 
+            function(data){                
+                data = $.parseJSON(data);   
+                                 
+                if( data.titolo ){
+                    $('#titolo').html( data.titolo );
+                    document.title = data.titolo;
+                }
         
-        $("#ujo").dblclick(function(){
-            fr = $("<iframe />").contentEditable='true';
-            fr.designMode='on'; 
-            fr.html=$(this).html();
-            $(this).after( fr );
-            //$(fr).after(this);
-           //.after($(this));
-            //$(this).contentEditable='true';
-            //document.designMode='on'; 
-            
-        })
-	});
+                if(data.teksto){
+                    $('#teksto').fadeTo(100, 0.01, function () {
+                                    $(this).html(data.teksto).fadeTo(100, 1);
+                                });    
+                }
+                
+                if(data.debug){
+                    $('#debug').fadeTo(100, 0.01, function () {
+                                    $(this).html(data.debug).fadeTo(100, 1);
+                                });    
+                }                
+			     
+                if( data.lasta ){
+                    $('#lasta').html( data.lasta);    
+                }
+    		}
+    );
+}

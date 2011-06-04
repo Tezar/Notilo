@@ -63,9 +63,11 @@ class Pagxo implements arrayaccess{
      * @return
      */
     public function konservu($datoj = Array() ){
-        global $DB;
+        global $DB, $DB_DEBUG;
         
         $gxisdatigaro = array_merge($this->gxisdatigaro,$datoj);
+
+        $DB_DEBUG[] = Array("konservu", $this->gxisdatigaro);
         
         if(empty($gxisdatigaro)){  //povas okazi ke estas nenio por gxisdatigi  
             return;                //ekzample kiam oni provas agordi saman valoron kia estas en db
@@ -91,13 +93,13 @@ class Pagxo implements arrayaccess{
         //cxu krei aux gxisdatigi?
         if( isset($this->rikordo['id']) ){ //<----------------- GXISDATIGO
              
-            if(isset($gxisdatigaro["titolo"]) ){
-                if(empty($gxisdatigaro["titolo"])){ //se ni gxisdtigas nomon de pagxo,gxi devas esti plenigita
+            if(isset($gxisdatigaro["nomo"]) ){
+                if(empty($gxisdatigaro["nomo"])){ //se ni gxisdtigas nomon de pagxo,gxi devas esti plenigita
                     throw new PagxoException("Pagxo devas havi nomon");
                 }else{ //anstatuxigu novan nomon en la vojo
                     $vojo = explode("/",$this->rikordo["vojo"]);
                     array_pop($vojo);
-                    $vojo = implode("/",$vojo).SEOigu($gxisdatigaro["titolo"]);
+                    $vojo = implode("/",$vojo)."/".SEOigu($gxisdatigaro["nomo"]);
                     
                     $gxisdatigaro["vojo"] = $vojo;
                     
@@ -106,26 +108,26 @@ class Pagxo implements arrayaccess{
             }
             
             
-            $this->rikordo->update($gxisdatigaro);
+            $this->rikordo = $this->rikordo->update($gxisdatigaro);
         
         }else{ //<--------------------------------------------- NOVA
             //se ni kreas novan pagxon gxi devas havi nomon
-            if(empty($gxisdatigaro["titolo"])){
+            if(empty($gxisdatigaro["nomo"])){
                 throw new PagxoException("Pagxo devas havi nomon");    
             }
             
             //akiro de propra vojo
             if( $gxisdatigaro["patro"] ){
-                $gxisdatigaro["vojo"] = $DB->pagxoj[  $gxisdatigaro["patro"] ]["vojo"]."/".SEOigu($gxisdatigaro["titolo"]);
+                $gxisdatigaro["vojo"] = $DB->pagxoj[  $gxisdatigaro["patro"] ]["vojo"]."/".SEOigu($gxisdatigaro["nomo"]);
             }else{
-                $gxisdatigaro["vojo"] = SEOigu($gxisdatigaro["titolo"]);
+                $gxisdatigaro["vojo"] = SEOigu($gxisdatigaro["nomo"]);
             }
             try{
                 $this->rikordo = $DB->pagxoj()->insert($gxisdatigaro);
             }
             catch(PDOException $e){
                 if($e->getCode() != "HY000") throw $e;
-                //versxajne duplika titolo
+                //versxajne duplika nomo
                 throw new PagxoException("Eraro! Versxajne duplika rikordo ({$e->getMessage()})",self::DUPLIKA);
                 
             }                
@@ -147,8 +149,8 @@ class Pagxo implements arrayaccess{
         $vojoPatro .= "/";
 
         //rikure gxisdatigu cxiujn idajn pagxojn
-        foreach($DB->pagxoj("patro = ?",$patro)->select("id,titolo") as $pagxo ){
-            $vojo = $vojoPatro.SEOigu($pagxo["titolo"]) ;
+        foreach($DB->pagxoj("patro = ?",$patro)->select("id,nomo") as $pagxo ){
+            $vojo = $vojoPatro.SEOigu($pagxo["nomo"]) ;
             $pagxo->update( Array("vojo" =>$vojo ) );
             self::gxisdatiguVojojn($pagxo["id"],$vojo);
         }
@@ -161,7 +163,7 @@ class Pagxo implements arrayaccess{
         if(!isset($this["id"])){ //se ni ne ekzitas ni na povas havi idojn
             return Array();
         }
-        return $DB->pagxoj("patro = ?", $this["id"])->fetchPairs("vojo", "titolo");
+        return $DB->pagxoj("patro = ?", $this["id"])->fetchPairs("vojo", "nomo");
     }
     
     
@@ -176,7 +178,7 @@ class Pagxo implements arrayaccess{
 
         $redono = Array();
         foreach( $DB->pagxoj(Array("patro"=>$patro))->order("vojo") as $rikordo){
-            $redono[] = Array($rikordo["vojo"],$rikordo["titolo"],self::akiruCxiujn((int) $rikordo["id"])); 
+            $redono[] = Array($rikordo["vojo"],$rikordo["nomo"],self::akiruCxiujn((int) $rikordo["id"])); 
         }
         return $redono;   
     }
@@ -189,6 +191,8 @@ class Pagxo implements arrayaccess{
      * @return
      */
     public function offsetSet($desxovo, $valoro) {
+        global $DB_DEBUG;
+        $DB_DEBUG[] = Array("konservu $desxovo", $valoro);
         if($valoro != $this->rikordo[$desxovo]){
             $this->gxisdatigaro[$desxovo] = $valoro;
         }
