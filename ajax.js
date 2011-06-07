@@ -3,8 +3,8 @@ $(function(){
             $.tempolimo = 0;
     
     		
-            $("#nomo, #teksto").keydown(traktilo).keypress(traktilo);
-            $("#nomo, #teksto").dblclick(function(){
+            $("#nomo, #enhavo").keydown(traktilo).keypress(traktilo);
+            $("#nomo, #enhavo").dblclick(function(){
                             $(this).attr("contentEditable",'true'); 
                             })
             });
@@ -36,9 +36,9 @@ function agu(sender) {
                     document.title = data.titolo;
                 }
         
-                if(data.teksto){
-                    $('#teksto').fadeTo(100, 0.01, function () {
-                                    $(this).html(data.teksto).fadeTo(100, 1);
+                if(data.enhavo){
+                    $('#enhavo').fadeTo(100, 0.01, function () {
+                                    $(this).html(data.enhavo).fadeTo(100, 1);
                                 });    
                 }
                 

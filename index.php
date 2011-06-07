@@ -44,7 +44,7 @@ if($vojo == ""){ //<------------------ CXEFA PAGXO
         $pagxo = new Pagxo();
         $vojeroj = explode("/",$vojo);
         $pagxo["nomo"] = array_pop($vojeroj);
-        $pagxo["teksto"] = "Nova pagxo";
+        $pagxo["enhavo"] = "Nova pagxo";
         
         if(!empty($vojeroj)){
             $pagxo["patro"] = implode("/",$vojeroj);
@@ -58,7 +58,7 @@ if($vojo == ""){ //<------------------ CXEFA PAGXO
             case "konservi":
                         switch($_POST["celo"]){
                             case "nomo": $pagxo["nomo"] = strip_tags($_POST["enhavo"]); break;
-                            case "teksto": $pagxo["teksto"] = $_POST["enhavo"]; break; 
+                            case "enhavo": $pagxo["enhavo"] = $_POST["enhavo"]; break; 
                             default: die("chyba");
                         }
                         
@@ -66,7 +66,7 @@ if($vojo == ""){ //<------------------ CXEFA PAGXO
                        
                         //todo: cxu ni vere bezonas ajax/post? nesuficxas nur ajax?
                         if($_SERVER["HTTP_X_REQUESTED_WITH"] == 'XMLHttpRequest'){//<- demandita per AJAX
-                            echo json_encode( Array("nomo"=>$pagxo["nomo"], "teksto"=>$pagxo["teksto"], "debug" => kreuDebugTablon($DB_DEBUG) )); 
+                            echo json_encode( Array("nomo"=>$pagxo["nomo"], "enhavo"=>$pagxo["enhavo"], "debug" => kreuDebugTablon($DB_DEBUG) )); 
                             exit;    
                         }
                         break;
@@ -85,7 +85,7 @@ if($vojo == ""){ //<------------------ CXEFA PAGXO
     }
     
     $enhavo = "<div id='nomo'><h1>{$pagxo["nomo"]}</h1></div>";
-    $enhavo .= "<div id='teksto'>{$pagxo["teksto"]}sdfasf<br/></div>";
+    $enhavo .= "<div id='enhavo'>{$pagxo["enhavo"]}sdfasf<br/></div>";
     $enhavo .= "<input type='hidden' id='pagxo_id' value='{$pagxo["id"]}' />";
     
 }
