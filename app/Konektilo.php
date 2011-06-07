@@ -1,7 +1,7 @@
 <?
 include WEB_DIR."/app/NotORM.php";
 
-$connection = new PDO("sqlite2:".WEB_DIR.'\testdb');
+$connection = new PDO("sqlite2:".DB_DOSIERO);
 $connection->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 $connection->setAttribute(PDO::ATTR_CASE, PDO::CASE_LOWER);
 

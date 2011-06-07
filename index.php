@@ -1,44 +1,71 @@
 <?
-// absolute filesystem path to the web root
+// absouta vojo al dosierujo
 define('WEB_DIR', dirname(__FILE__));
 
+
+//por pli facilago de mult-uzantaj sistemoj
+define('DB_DOSIERO',WEB_DIR.'\testdb');
+//se uzita devas havi finan '/'
+define('PREFIX_LIGILOJ', "tezar/");
+
+////////////////////////////////////////////////////////////
 
 include WEB_DIR."/app/Konektilo.php";
 include WEB_DIR."/app/Utilaj.php";
 include WEB_DIR."/app/Pagxo.php";
 
-$vojo = trim($_SERVER["REQUEST_URI"],"/");
+while(true){
+    $vojo = trim($_SERVER["REQUEST_URI"],"/");
 
-//todo: cxu ni povas esti en subdosieruo?
-//unuigo de "/" kaj "/index.php"
-if( $vojo == "index.php"){
-    header("Location: http://{$_SERVER["HTTP_HOST"]}/",TRUE,307);
-    exit;    
-}
-
-//unue ni asertos(?) ke ni havas bonan seo adreson
-$vojoSeo = SEOigu($vojo);
-
-if($vojo != $vojoSeo){
-    //todo: kontroli protokolon cxu vere http
-    header("Location: http://{$_SERVER["HTTP_HOST"]}/$vojoSeo",TRUE,307);
-    exit;
-} 
+    //---------------- KONTROLO DE PREFIKSO 
+    if( strlen(PREFIX_LIGILOJ) ){ 
+        //------------------ MALBONA VOJO
+        if( substr($vojo,0, strlen( trim(PREFIX_LIGILOJ,"/"))) != trim(PREFIX_LIGILOJ,"/") ){ 
+            $enhavo = "Malbona vojo - (".PREFIX_LIGILOJ." x {$vojo})";
+            break;    
+        }
+        
+        //prefikso estas bona, fortranĉu ĝin
+        $vojo = substr($vojo,strlen(PREFIX_LIGILOJ));
+        
+    }    
 
 
+    //unuigo de "/" kaj "/index.php"
+    if( $vojo == "index.php"){
+        header("Location: http://{$_SERVER["HTTP_HOST"]}/".PREFIX_LIGILOJ,TRUE,307);
+        exit;    
+    }
 
-if($vojo == ""){ //<------------------ CXEFA PAGXO
-    $cxio = Pagxo::akiruCxiujn();
-    $enhavo = faruListon($cxio);
+
+    //unue ni asertos(?) ke ni havas bonan seo adreson
+    $vojoSeo = SEOigu($vojo);
     
-}elseif( false){ //<------------------ AGORDOJ
+    if($vojo != $vojoSeo){
+        //todo: kontroli protokolon cxu vere http
+        header("Location: http://{$_SERVER["HTTP_HOST"]}/".PREFIX_LIGILOJ."$vojoSeo",TRUE,307);
+        exit;
+    } 
+
+
     
-}else{ //<---------------------------- ALIAJ PAGXO
-    //akiru pagxon per vojo(normale) aux per id (akirita trans la post, cxar nomo povis sxangxi) aux priparu novan
+    //------------------ CXEFA PAGXO
+    if($vojo == ""){ 
+        $cxio = Pagxo::akiruCxiujn();
+        
+        $enhavo .= "<h1>Notilo</h1>";
+        $enhavo .= faruListon($cxio);
+        break;
+    }
+
+
+    //---------------------------- ALIAJ PAGXO
+    //akiru pagxon per vojo(normale) aux per id (akirita trans la post, cxar nomo povis sxangxi)
+    //aux priparu novan
     try{
         $pagxo = new Pagxo( isset($_POST["pagxo_id"])?$_POST["pagxo_id"]:$vojo );
         
-    }catch(PagxoException $e){
+    }catch(PagxoException $e){ //...aux priparu novan
         //se oni okazais aliaeraro ol ke pagxo neekzistas nedauxrigu
         if($e->getCode() != Pagxo::NEEKZISTAS) throw $e;
         $pagxo = new Pagxo();
@@ -87,8 +114,11 @@ if($vojo == ""){ //<------------------ CXEFA PAGXO
     $enhavo = "<div id='nomo'><h1>{$pagxo["nomo"]}</h1></div>";
     $enhavo .= "<div id='enhavo'>{$pagxo["enhavo"]}sdfasf<br/></div>";
     $enhavo .= "<input type='hidden' id='pagxo_id' value='{$pagxo["id"]}' />";
-    
+
+    break;
 }
+
+
 
 
 header('Content-Type: text/html; charset=utf-8');

@@ -26,7 +26,7 @@ function faruListon($datoj){
     foreach($datoj as $ero){
         list($vojo,$titolo,$idoj) = $ero;
         $redono .= "<li>";
-        $redono .= "<a href='$vojo'>$titolo</a>";
+        $redono .= "<a href='/".PREFIX_LIGILOJ."$vojo'>$titolo</a>";
         
         if(!empty($idoj)){
             $redono .= faruListon($idoj);

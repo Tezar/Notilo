@@ -1,4 +1,4 @@
-$(function(){
+    $(function(){
             $.ajaxSetup({timeout: 4000});   
             $.tempolimo = 0;
     
