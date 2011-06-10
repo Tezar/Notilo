@@ -83,19 +83,24 @@ while(true){
         //todo: redoni json nur se estas AJAX demando
         switch($_POST["ago"]){
             case "konservi":
-                        switch($_POST["celo"]){
-                            case "nomo": $pagxo["nomo"] = strip_tags($_POST["enhavo"]); break;
-                            case "enhavo": $pagxo["enhavo"] = $_POST["enhavo"]; break; 
-                            default: die("chyba");
+            
+                        //kiam estas kreita nova pagxo, ni ricevas kaj nomon kaj tekston kune
+                        if( ($_POST["celo"]=="nomo") or isset($_POST["nomo"]) ){
+                            $pagxo["nomo"] = strip_tags( isset($_POST["nomo"])? $_POST["nomo"] : $_POST["enhavo"] );    
                         }
                         
+                        if( ($_POST["celo"]=="enhavo") or isset($_POST["enhavo"]) ){
+                            $pagxo["enhavo"] = strip_tags( isset($_POST["enhavo"])? $_POST["enhavo"] : $_POST["enhavo"] );    
+                        }
+
                         $pagxo->konservu();
                        
                         //todo: cxu ni vere bezonas ajax/post? nesuficxas nur ajax?
                         if($_SERVER["HTTP_X_REQUESTED_WITH"] == 'XMLHttpRequest'){//<- demandita per AJAX
-                            echo json_encode( Array("nomo"=>$pagxo["nomo"], "enhavo"=>$pagxo["enhavo"], "debug" => kreuDebugTablon($DB_DEBUG) )); 
+                            echo json_encode( Array("nomo"=>$pagxo["nomo"], "enhavo"=>$pagxo["enhavo"],"id"=>$pagxo["id"], "debug" => kreuDebugTablon($DB_DEBUG) )); 
                             exit;    
                         }
+                        
                         break;
             case "idoj":
                         $idoj = $pagxo->akiruIdojn();
@@ -111,9 +116,10 @@ while(true){
         
     }
     
-    $enhavo = "<div id='nomo'><h1>{$pagxo["nomo"]}</h1></div>";
+    $enhavo = "<h1>&raquo;<span id='nomo'>{$pagxo["nomo"]}</span></h1>";
     $enhavo .= "<div id='enhavo'>{$pagxo["enhavo"]}sdfasf<br/></div>";
-    $enhavo .= "<input type='hidden' id='pagxo_id' value='{$pagxo["id"]}' />";
+    $enhavo .= "<div id='lasta_sxangxo'>".($pagxo["sxangxita"]?date("H:i:s d.m.Y",$pagxo["sxangxita"]):"Nova")."<br/></div>";
+    $enhavo .= "<input type='text' id='pagxo_id' value='{$pagxo["id"]}' />";
 
     break;
 }
@@ -137,7 +143,14 @@ header('Content-Type: text/html; charset=utf-8');
         <title><?= $nomo ?></title>
 </head>
 <body>
-<div class="eta"><?= $_SERVER["REMOTE_ADDR"] ?></div>
+<div class="eta" style="float: right;"><?= $_SERVER["REMOTE_ADDR"] ?></div>
+
+<div id="menuo">
+<a href="/<?=PREFIX_LIGILOJ?>">Ĉefa paĝo</a>
+<a href="/<?=PREFIX_LIGILOJ?>agordoj">Agordoj</a>
+</div>
+
+
 <?= $enhavo ?>
 
 <?

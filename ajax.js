@@ -25,32 +25,46 @@ var traktilo = function(event) {
             	};
 
 /****************************************************/
+
+
+//todo: se estas nova paĝo, ni devas sendi ankoraŭ nomon kaj daŭre ni devas plenigi pagxo_id
             
 function agu(sender) {
-	$.post(window.location.href, {"celo":(sender.id) ,"pagxo_id": $("#pagxo_id").val(), "enhavo": $(sender).html(),ago: "konservi" }, 
-            function(data){                
-                data = $.parseJSON(data);   
-                                 
-                if( data.titolo ){
-                    $('#titolo').html( data.titolo );
-                    document.title = data.titolo;
-                }
+    if(! $("#pagxo_id").val()  ){
+        //nova pagxo
+        $.post(window.location.href, {"nomo":$("#nomo").html(),"enhavo": $("#enhavo").html(),ago: "konservi" },traktuRespondon);        
+    }else{
+        $.post(window.location.href, {"celo":(sender.id) ,"pagxo_id": $("#pagxo_id").val(), "enhavo": $(sender).html(),ago: "konservi" },traktuRespondon);    
+    }
+}
+
+
+function traktuRespondon(data){
+        alert(data);
+        data = $.parseJSON(data);   
+                         
+        if( data.titolo ){
+            $('#titolo').html( data.titolo );
+            document.title = data.titolo;
+        }
+
+        if(data.enhavo){
+            $('#enhavo').fadeTo(100, 0.01, function () {
+                            $(this).html(data.enhavo).fadeTo(100, 1);
+                        });    
+        }
         
-                if(data.enhavo){
-                    $('#enhavo').fadeTo(100, 0.01, function () {
-                                    $(this).html(data.enhavo).fadeTo(100, 1);
-                                });    
-                }
-                
-                if(data.debug){
-                    $('#debug').fadeTo(100, 0.01, function () {
-                                    $(this).html(data.debug).fadeTo(100, 1);
-                                });    
-                }                
-			     
-                if( data.lasta ){
-                    $('#lasta').html( data.lasta);    
-                }
-    		}
-    );
+        if(data.debug){
+            $('#debug').fadeTo(100, 0.01, function () {
+                            $(this).html(data.debug).fadeTo(100, 1);
+                        });    
+        } 
+        
+        if(data.id){
+            $('#pagxo_id').val(data.id);
+        }                                
+	     
+        if( data.lasta ){
+            $('#lasta').html( data.lasta);    
+        }
 }

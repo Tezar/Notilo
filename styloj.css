@@ -10,12 +10,6 @@ body{
     font-family: Verdana,"Geneva CE",lucida,sans-serif;
     font-size: 13px;
 }
-/*
-div.redaktebla{
-    background:#F2F2F2;
-    border:1px solid gray;
-    padding:3px
-}*/
 
 div.redaktebla:focus {
     outline: none;
@@ -27,14 +21,9 @@ div#ujo{
 }  
 
 div.eta{
-    float:right;
     font-family: Arial;
     font-size:12px;
     color:gray;
-}
-
-h1#titolo{
-    font-size:18px;
 }
 
 
@@ -44,4 +33,10 @@ h1{
     color:#04B45F;
     font-weight: normal;
     font-family:	Trebuchet MS,"Geneva CE",lucida,sans-serif
+}
+
+
+#menuo{
+    float:right;
+    
 }
