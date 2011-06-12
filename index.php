@@ -89,7 +89,7 @@ while(true){
                             $pagxo["nomo"] = strip_tags( isset($_POST["nomo"])? $_POST["nomo"] : $_POST["enhavo"] );    
                         }
                         
-                        if( ($_POST["celo"]=="enhavo") or isset($_POST["enhavo"]) ){
+                        if( ($_POST["celo"]=="enhavo") or ( !isset($_POST["celo"]) and isset($_POST["enhavo"]) ) ){
                             $pagxo["enhavo"] = strip_tags( isset($_POST["enhavo"])? $_POST["enhavo"] : $_POST["enhavo"] );    
                         }
 
