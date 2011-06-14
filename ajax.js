@@ -3,12 +3,54 @@
             $.tempolimo = 0;
     
     		
-            $("#nomo, #enhavo").keydown(traktilo).keypress(traktilo);
-            $("#nomo, #enhavo").dblclick(function(){
+            $("#nomo").click(aldonuEdit);
+            $("#enhavo").keydown(traktilo).keypress(traktilo);
+            $("#enhavo").dblclick(function(){
                             $(this).attr("contentEditable",'true'); 
                             })
             });
             
+
+
+//keydown(traktilo).keypress(traktilo);
+
+var aldonuEdit = function(event){
+                var valoro = $(event.target).text();
+                var patro = $(event.target).parent();
+                $(event.target).remove();
+                
+                el = document.createElement("input");
+                el.onkeypress = function(e){
+                                    var el = e.target;
+                                    if(e.keyCode=='13'){
+                                        redonu(el, el.value);
+                                        agu( $("#nomo") );
+                                        }
+                                    else if(e.keyCode=='27'){
+                                        redonu(el, el.origValoro );
+                                        } 
+                                };
+                el.onblur = function (e){ var el = e.target; redonu(el, el.origValoro); };
+                                                
+                el.id="nomo";                
+                el.type="text";
+                el.value = valoro;
+                el.origValoro = valoro;
+                patro.append(el);
+                el.focus();
+        }
+        
+var redonu = function (el, str ){
+   var patro = $(el).parent();
+   el.onblur = null ;
+   $(el).remove();
+   
+   elspan = document.createElement("span");    
+   elspan.id="nomo";
+   elspan.innerHTML = str;   
+   elspan.onclick = aldonuEdit;    
+   $(patro).append(elspan);     
+}            
 
 /****************************************************/
 var traktilo = function(event) {
@@ -17,6 +59,10 @@ var traktilo = function(event) {
                   	else if (event.srcElement) elemento = event.srcElement;
 
     
+                    if (event.which == 0 || event.charCode == 0) { //ignoru klavarojn kiu neskribas signojn
+                            return true;
+                    }
+
     
             		clearTimeout($.tempolimo);
                     
@@ -25,19 +71,6 @@ var traktilo = function(event) {
             	};
 
 /****************************************************/
-
-function konservu(){
-        $.ajax(
-            { url :window.location.href, 
-              type: "POST",
-              data: {nomo:$("#nomo").html(),
-                     enhavo: $("#enhavo").html(),
-                     pagxo_id:$("#pagxo_id").val(),
-                     ago: "konservi" },
-              success:traktuRespondon});    
-}
-
-            
 function agu(sender) {
     if(! $("#pagxo_id").val()  ){
         //nova pagxo
@@ -54,9 +87,19 @@ function agu(sender) {
     }
 }
 
+function konservu(){
+        $.ajax(
+            { url :window.location.href, 
+              type: "POST",
+              data: {nomo:$("#nomo").html(),
+                     enhavo: $("#enhavo").html(),
+                     pagxo_id:$("#pagxo_id").val(),
+                     ago: "konservi" },
+              success:traktuRespondon});    
+}
 
 function traktuRespondon(data){
-        data = $.parseJSON(data);   
+        data = $.parseJSON(data);
                          
         if( data.titolo ){
             $('#titolo').html( data.titolo );
@@ -80,7 +123,9 @@ function traktuRespondon(data){
         }
             
         //cxiam faru mesagxojn
-        $('#mesagxoj').html( data.mesagxoj );    
+        $('#mesagxoj').fadeTo(100, 0.01, function () {
+                            $(this).html(data.mesagxoj).fadeTo(100, 1);
+                        });      
 	     
         if( data.sxangxita ){
             $('#lasta_sxangxo').html( data.sxangxita);    
