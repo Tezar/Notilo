@@ -88,7 +88,7 @@ while(true){
         //todo: redoni json nur se estas AJAX demando
         switch($_POST["ago"]){
             case "konservi":
-            
+                        $DB_DEBUG[] = Array("",var_export($_POST,true));
                         //kiam estas kreita nova pagxo, ni ricevas kaj nomon kaj tekston kune
                         if( ($_POST["celo"]=="nomo") or isset($_POST["nomo"]) ){
                             $pagxo["nomo"] = strip_tags( isset($_POST["nomo"])? $_POST["nomo"] : $_POST["enhavo"] );    
@@ -98,7 +98,11 @@ while(true){
                             $pagxo["enhavo"] = strip_tags( isset($_POST["enhavo"])? $_POST["enhavo"] : $_POST["enhavo"] );    
                         }
                         
-                        $pagxo->konservu();
+                        try{                        
+                            $pagxo->konservu();
+                        }catch(PagxoException $e){
+                            mesagxu("Okazis eraro, samnoma paĝo jam verŝajne ekzistas","eraro");
+                        }
                        
                         //todo: cxu ni vere bezonas ajax/post? nesuficxas nur ajax?
                         if($_SERVER["HTTP_X_REQUESTED_WITH"] == 'XMLHttpRequest'){//<- demandita per AJAX

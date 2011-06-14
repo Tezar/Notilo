@@ -72,7 +72,7 @@ function mesagxoj(){
         list($typo, $msg) = $du;
         
         //se neestas typo msg aldonu gxin
-        if($typo != "msg") $typo .= "msg";
+        if($typo != "msg") $typo = "msg $typo";
         
         $redono .= "<div class='$typo'>$msg</div>";
     }

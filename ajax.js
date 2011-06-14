@@ -79,7 +79,7 @@ function agu(sender) {
         $.ajax(
             { url :window.location.href,
               type: "POST",
-              data: {celo:(sender.id) ,
+              data: {celo:(sender.attr('id') ) ,
                      pagxo_id: $("#pagxo_id").val(), 
                      enhavo: $(sender).html(),
                      ago: "konservi" },

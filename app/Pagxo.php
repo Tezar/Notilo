@@ -108,8 +108,16 @@ class Pagxo implements arrayaccess{
                 }
             }
             
-             //update redona            
-            $this->rikordo->update($gxisdatigaro);
+            try{
+                 //update redona            
+                $this->rikordo->update($gxisdatigaro);
+            }catch(PDOException $e){
+                if($e->getCode() != "HY000") throw $e;
+                //versxajne duplika nomo
+                throw new PagxoException("Eraro! Versxajne duplika rikordo ({$e->getMessage()})",self::DUPLIKA);
+            }                
+            
+            
             
             foreach($gxisdatigaro as $nomo => $valoro){
                 $this->rikordo[$nomo] = $valoro;
