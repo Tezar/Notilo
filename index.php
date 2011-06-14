@@ -49,6 +49,11 @@ while(true){
     } 
 
 
+
+    //------------------------------------------------------- BAZA MENUO
+    $menuaro[] = Array('Ĉefa paĝo',' ','hejmo');
+    $menuaro[] = Array('Agordoj','agordoj','agordoj');
+
     
     //-------------------------------------------------------  CXEFA PAGXO
     if($vojo == ""){ 
@@ -61,11 +66,12 @@ while(true){
 
 
     //---------------------------- ALIAJ PAGXO
+    $menuaro[] = Array('forviŝi','agordoj','forvisxi');
+
     //akiru pagxon per vojo(normale) aux per id (akirita trans la post, cxar nomo povis sxangxi)
     //aux priparu novan
     try{
         $pagxo = new Pagxo( isset($_POST["pagxo_id"])?$_POST["pagxo_id"]:$vojo );
-        
     }catch(PagxoException $e){ //...aux priparu novan
         //se oni okazais aliaeraro ol ke pagxo neekzistas nedauxrigu
         if($e->getCode() != Pagxo::NEEKZISTAS) throw $e;
@@ -104,18 +110,15 @@ while(true){
                             mesagxu("Okazis eraro, samnoma paĝo jam verŝajne ekzistas","eraro");
                         }
                        
-                        //todo: cxu ni vere bezonas ajax/post? nesuficxas nur ajax?
-                        if($_SERVER["HTTP_X_REQUESTED_WITH"] == 'XMLHttpRequest'){//<- demandita per AJAX
-                            
-                        
-                            echo json_encode( Array("nomo"=>$pagxo["nomo"], 
-                                                    "enhavo"=>$pagxo["enhavo"],
-                                                    "id"=>$pagxo["id"],
-                                                    "mesagxoj"=> mesagxoj(),
-                                                    "sxangxita" => ($pagxo["sxangxita"]?date("H:i:s d.m.Y",$pagxo["sxangxita"]):"Nova"),
-                                                    "debug" => kreuDebugTablon($DB_DEBUG) )); 
-                            exit;    
-                        }
+                     
+                        echo json_encode( Array("nomo"=>$pagxo["nomo"], 
+                                                "loko" => "/".PREFIX_LIGILOJ.SEOigu($pagxo["nomo"]),
+                                                "enhavo"=>$pagxo["enhavo"],
+                                                "id"=>$pagxo["id"],
+                                                "mesagxoj"=> mesagxoj(),
+                                                "sxangxita" => ($pagxo["sxangxita"]?date("H:i:s d.m.Y",$pagxo["sxangxita"]):"Nova"),
+                                                "debug" => kreuDebugTablon($DB_DEBUG) )); 
+                        exit;    
                         
                         break;
             case "idoj":
@@ -159,13 +162,17 @@ header('Content-Type: text/html; charset=utf-8');
         <title><?= $nomo ?></title>
 </head>
 <body>
-
+<noscript><div class="msg eraro">Por uzado de tiuĉi aplikacio oni bezonas ŝaltitan JavaScript</div></noscript>
 <!-- <div class="eta" style="float: right;"><?= $_SERVER["REMOTE_ADDR"] ?></div> -->
 
 <div>
     <div id="menuo">
-        <a href="/<?=PREFIX_LIGILOJ?>"><img src="/bild/hejmo.png" alt='Ĉefa paĝo' /></a>
-        <a href="/<?=PREFIX_LIGILOJ?>agordoj"><img src="/bild/agordoj.png" alt='Agordoj'/></a>
+        <?
+        foreach($menuaro as $ero ){
+            list($nomo, $ligilo, $bildo, $skripto) = $ero;
+            echo "<a ".($ligilo?"href='/".PREFIX_LIGILOJ.$ligilo."' ":"").($skripto?"onclick='$skripto'":"").">".($bildo?"<img src='/bild/$bildo.png' alt='$nomo' />":$nomo)."</a>\n";    
+        }
+        ?>
     </div>
 </div>
 

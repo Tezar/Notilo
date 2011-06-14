@@ -93,6 +93,8 @@ class Pagxo implements arrayaccess{
         //cxu krei aux gxisdatigi?
         if( isset($this->rikordo['id']) ){ //<----------------- GXISDATIGO
              
+             
+             //todo: unue ŝanĝi nomon, kaj poste provi ŝanĝi idojn!
             if(isset($gxisdatigaro["nomo"]) ){
                 if(empty($gxisdatigaro["nomo"])){ //se ni gxisdtigas nomon de pagxo,gxi devas esti plenigita
                     throw new PagxoException("Pagxo devas havi nomon");
@@ -111,17 +113,24 @@ class Pagxo implements arrayaccess{
             try{
                  //update redona            
                 $this->rikordo->update($gxisdatigaro);
+
+                foreach($gxisdatigaro as $nomo => $valoro){
+                    $this->rikordo[$nomo] = $valoro;
+                }
+
             }catch(PDOException $e){
                 if($e->getCode() != "HY000") throw $e;
+                
+                //forĵetu novan nomon
+                unset($this->gxisdatigaro["nomo"]);
+                
                 //versxajne duplika nomo
                 throw new PagxoException("Eraro! Versxajne duplika rikordo ({$e->getMessage()})",self::DUPLIKA);
             }                
             
             
             
-            foreach($gxisdatigaro as $nomo => $valoro){
-                $this->rikordo[$nomo] = $valoro;
-            }
+
             
         }else{ //<--------------------------------------------- NOVA
             //se ni kreas novan pagxon gxi devas havi nomon

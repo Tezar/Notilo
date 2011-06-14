@@ -100,10 +100,15 @@ function konservu(){
 
 function traktuRespondon(data){
         data = $.parseJSON(data);
+
+        if(data.loko && data.loko !== window.location.pathname){
+            window.location.pathname = data.loko ;
+            return;
+        }
                          
-        if( data.titolo ){
-            $('#titolo').html( data.titolo );
-            document.title = data.titolo;
+        if( data.nomo ){
+            $('#nomo').html( data.nomo );
+            document.title = data.nomo;
         }
 
         if(data.enhavo){
