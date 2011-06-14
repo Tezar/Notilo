@@ -40,7 +40,6 @@ function agu(sender) {
 
 
 function traktuRespondon(data){
-        alert(data);
         data = $.parseJSON(data);   
                          
         if( data.titolo ){

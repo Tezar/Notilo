@@ -99,7 +99,8 @@ class Pagxo implements arrayaccess{
                 }else{ //anstatuxigu novan nomon en la vojo
                     $vojo = explode("/",$this->rikordo["vojo"]);
                     array_pop($vojo);
-                    $vojo = implode("/",$vojo)."/".SEOigu($gxisdatigaro["nomo"]);
+                    $vojo[] = SEOigu($gxisdatigaro["nomo"]);
+                    $vojo = implode("/",$vojo);
                     
                     $gxisdatigaro["vojo"] = $vojo;
                     
@@ -175,9 +176,9 @@ class Pagxo implements arrayaccess{
      */
     static public function akiruCxiujn($patro = Null){
         global $DB;
-
+        //todo: akiri nur per unu demando
         $redono = Array();
-        foreach( $DB->pagxoj(Array("patro"=>$patro))->order("vojo") as $rikordo){
+        foreach( $DB->pagxoj(Array("patro"=>$patro))->select("vojo, id, nomo")->order("vojo") as $rikordo){
             $redono[] = Array($rikordo["vojo"],$rikordo["nomo"],self::akiruCxiujn((int) $rikordo["id"])); 
         }
         return $redono;   

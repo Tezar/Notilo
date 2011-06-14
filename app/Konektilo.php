@@ -1,33 +1,25 @@
 <?
 include WEB_DIR."/app/NotORM.php";
 
-$connection = new PDO("sqlite2:".DB_DOSIERO);
-$connection->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-$connection->setAttribute(PDO::ATTR_CASE, PDO::CASE_LOWER);
+$konekto = new PDO("sqlite2:".DB_DOSIERO);
+$konekto->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+$konekto->setAttribute(PDO::ATTR_CASE, PDO::CASE_LOWER);
 
-
-
-$structure = new NotORM_Structure_Convention(
+$strukturo = new NotORM_Structure_Convention(
     $primary = "id", // id
     $foreign = "%s_id", // id_$tablo
     $table = "%sj" // {$tablo}j
 );
 
-
-
-$DB = new NotORM($connection,$structure);
+$DB = new NotORM($konekto,$strukturo);
 $DB->debug = "notormdebug";
 
-
-
-
 // debug informaro
-
 $DB_DEBUG = Array();
 
-function notormdebug($query, $parameters){
+function notormdebug($demando, $parametroj){
     global $DB_DEBUG;
-    $DB_DEBUG[] = Array($query,$parameters);
+    $DB_DEBUG[] = Array($demando,$parametroj);
     return True;
 }
  

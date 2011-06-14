@@ -1,12 +1,13 @@
 <?
 // absouta vojo al dosierujo
+
 define('WEB_DIR', dirname(__FILE__));
 
 
 //por pli facilago de mult-uzantaj sistemoj
 define('DB_DOSIERO',WEB_DIR.'\testdb');
 //se uzita devas havi finan '/'
-define('PREFIX_LIGILOJ', "tezar/");
+define('PREFIX_LIGILOJ', "");
 
 ////////////////////////////////////////////////////////////
 
@@ -17,7 +18,7 @@ include WEB_DIR."/app/Pagxo.php";
 while(true){
     $vojo = trim($_SERVER["REQUEST_URI"],"/");
 
-    //---------------- KONTROLO DE PREFIKSO 
+    //------------------------------------------------------- KONTROLO DE PREFIKSO 
     if( strlen(PREFIX_LIGILOJ) ){ 
         //------------------ MALBONA VOJO
         if( substr($vojo,0, strlen( trim(PREFIX_LIGILOJ,"/"))) != trim(PREFIX_LIGILOJ,"/") ){ 
@@ -31,7 +32,7 @@ while(true){
     }    
 
 
-    //unuigo de "/" kaj "/index.php"
+    //------------------------------------------------------- unuigo de "/" kaj "/index.php"
     if( $vojo == "index.php"){
         header("Location: http://{$_SERVER["HTTP_HOST"]}/".PREFIX_LIGILOJ,TRUE,307);
         exit;    
@@ -49,7 +50,7 @@ while(true){
 
 
     
-    //------------------ CXEFA PAGXO
+    //-------------------------------------------------------  CXEFA PAGXO
     if($vojo == ""){ 
         $cxio = Pagxo::akiruCxiujn();
         
@@ -154,8 +155,6 @@ header('Content-Type: text/html; charset=utf-8');
 <?= $enhavo ?>
 
 <?
-
-
 /*******************************************/
 // transkribu debug informaron plenigitan per Konktilo.php/notormdebug
   
