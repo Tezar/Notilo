@@ -76,7 +76,7 @@ while(true){
         $pagxo["enhavo"] = "Nova pagxo";
         
         
-        mesagxu("Tiucxi pagxo estas nova");
+        mesagxu("Tiuĉi paĝo estas nova");
         
         if(!empty($vojeroj)){
             $pagxo["patro"] = implode("/",$vojeroj);
@@ -98,9 +98,7 @@ while(true){
                             $pagxo["enhavo"] = strip_tags( isset($_POST["enhavo"])? $_POST["enhavo"] : $_POST["enhavo"] );    
                         }
                         
-                        $DB_DEBUG[] = Array("s",$pagxo["sxangxita"]);
                         $pagxo->konservu();
-                        $DB_DEBUG[] = Array("s2",$pagxo["sxangxita"]);
                        
                         //todo: cxu ni vere bezonas ajax/post? nesuficxas nur ajax?
                         if($_SERVER["HTTP_X_REQUESTED_WITH"] == 'XMLHttpRequest'){//<- demandita per AJAX
@@ -160,13 +158,14 @@ header('Content-Type: text/html; charset=utf-8');
 
 <!-- <div class="eta" style="float: right;"><?= $_SERVER["REMOTE_ADDR"] ?></div> -->
 
-<div style="float: right;">
+<div>
     <div id="menuo">
-        <a href="/<?=PREFIX_LIGILOJ?>">Ĉefa paĝo</a>
-        <a href="/<?=PREFIX_LIGILOJ?>agordoj">Agordoj</a>
+        <a href="/<?=PREFIX_LIGILOJ?>"><img src="/bild/hejmo.png" alt='Ĉefa paĝo' /></a>
+        <a href="/<?=PREFIX_LIGILOJ?>agordoj"><img src="/bild/agordoj.png" alt='Agordoj'/></a>
     </div>
-    <div id="mesagxoj"><?= mesagxoj() ?></div>
 </div>
+
+<div id="mesagxoj"><?= mesagxoj() ?></div>
 
 
 

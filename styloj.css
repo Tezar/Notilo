@@ -35,8 +35,15 @@ h1{
     font-family:	Trebuchet MS,"Geneva CE",lucida,sans-serif
 }
 
+input#nomo{
+    font-size: 23px;
+    color:#04B45F;
+    font-family:	Trebuchet MS,"Geneva CE",lucida,sans-serif
+}
+
 
 #mesagxoj{
+    float:right;
     width:400px;
 }
 
