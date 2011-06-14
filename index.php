@@ -69,10 +69,14 @@ while(true){
     }catch(PagxoException $e){ //...aux priparu novan
         //se oni okazais aliaeraro ol ke pagxo neekzistas nedauxrigu
         if($e->getCode() != Pagxo::NEEKZISTAS) throw $e;
+        
         $pagxo = new Pagxo();
         $vojeroj = explode("/",$vojo);
         $pagxo["nomo"] = array_pop($vojeroj);
         $pagxo["enhavo"] = "Nova pagxo";
+        
+        
+        mesagxu("Tiucxi pagxo estas nova");
         
         if(!empty($vojeroj)){
             $pagxo["patro"] = implode("/",$vojeroj);
@@ -93,12 +97,21 @@ while(true){
                         if( ($_POST["celo"]=="enhavo") or ( !isset($_POST["celo"]) and isset($_POST["enhavo"]) ) ){
                             $pagxo["enhavo"] = strip_tags( isset($_POST["enhavo"])? $_POST["enhavo"] : $_POST["enhavo"] );    
                         }
-
+                        
+                        $DB_DEBUG[] = Array("s",$pagxo["sxangxita"]);
                         $pagxo->konservu();
+                        $DB_DEBUG[] = Array("s2",$pagxo["sxangxita"]);
                        
                         //todo: cxu ni vere bezonas ajax/post? nesuficxas nur ajax?
                         if($_SERVER["HTTP_X_REQUESTED_WITH"] == 'XMLHttpRequest'){//<- demandita per AJAX
-                            echo json_encode( Array("nomo"=>$pagxo["nomo"], "enhavo"=>$pagxo["enhavo"],"id"=>$pagxo["id"], "debug" => kreuDebugTablon($DB_DEBUG) )); 
+                            
+                        
+                            echo json_encode( Array("nomo"=>$pagxo["nomo"], 
+                                                    "enhavo"=>$pagxo["enhavo"],
+                                                    "id"=>$pagxo["id"],
+                                                    "mesagxoj"=> mesagxoj(),
+                                                    "sxangxita" => ($pagxo["sxangxita"]?date("H:i:s d.m.Y",$pagxo["sxangxita"]):"Nova"),
+                                                    "debug" => kreuDebugTablon($DB_DEBUG) )); 
                             exit;    
                         }
                         
@@ -144,12 +157,18 @@ header('Content-Type: text/html; charset=utf-8');
         <title><?= $nomo ?></title>
 </head>
 <body>
-<div class="eta" style="float: right;"><?= $_SERVER["REMOTE_ADDR"] ?></div>
 
-<div id="menuo">
-<a href="/<?=PREFIX_LIGILOJ?>">Ĉefa paĝo</a>
-<a href="/<?=PREFIX_LIGILOJ?>agordoj">Agordoj</a>
+<!-- <div class="eta" style="float: right;"><?= $_SERVER["REMOTE_ADDR"] ?></div> -->
+
+<div style="float: right;">
+    <div id="menuo">
+        <a href="/<?=PREFIX_LIGILOJ?>">Ĉefa paĝo</a>
+        <a href="/<?=PREFIX_LIGILOJ?>agordoj">Agordoj</a>
+    </div>
+    <div id="mesagxoj"><?= mesagxoj() ?></div>
 </div>
+
+
 
 
 <?= $enhavo ?>

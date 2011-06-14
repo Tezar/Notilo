@@ -48,3 +48,35 @@ function kreuDebugTablon($dataro){
 }
 
 
+/**
+ * mesagxu()
+ * aldonas mesagxon al la listo
+ * 
+ * @param string $mesagxo
+ * @param string $typo
+ * @return void
+ */
+function mesagxu($mesagxo, $typo="msg"){
+    global $_MESAGXOJ;
+    if(!isset($_MESAGXOJ)) $_MESAGXOJ = Array();
+    
+    $_MESAGXOJ[] = Array($typo, $mesagxo); 
+}
+    
+function mesagxoj(){
+    global $_MESAGXOJ;
+    if(!isset($_MESAGXOJ)) $_MESAGXOJ = Array();
+    
+    $redono = "";
+    foreach($_MESAGXOJ as $du){
+        list($typo, $msg) = $du;
+        
+        //se neestas typo msg aldonu gxin
+        if($typo != "msg") $typo .= "msg";
+        
+        $redono .= "<div class='$typo'>$msg</div>";
+    }
+    
+    
+    return $redono;
+}

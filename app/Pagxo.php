@@ -108,9 +108,13 @@ class Pagxo implements arrayaccess{
                 }
             }
             
+             //update redona            
+            $this->rikordo->update($gxisdatigaro);
             
-            $this->rikordo = $this->rikordo->update($gxisdatigaro);
-        
+            foreach($gxisdatigaro as $nomo => $valoro){
+                $this->rikordo[$nomo] = $valoro;
+            }
+            
         }else{ //<--------------------------------------------- NOVA
             //se ni kreas novan pagxon gxi devas havi nomon
             if(empty($gxisdatigaro["nomo"])){
@@ -193,8 +197,8 @@ class Pagxo implements arrayaccess{
      */
     public function offsetSet($desxovo, $valoro) {
         global $DB_DEBUG;
-        $DB_DEBUG[] = Array("konservu $desxovo", $valoro);
         if($valoro != $this->rikordo[$desxovo]){
+            $DB_DEBUG[] = Array("konservu $desxovo", $valoro);
             $this->gxisdatigaro[$desxovo] = $valoro;
         }
     }
