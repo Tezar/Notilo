@@ -26,15 +26,31 @@ var traktilo = function(event) {
 
 /****************************************************/
 
+function konservu(){
+        $.ajax(
+            { url :window.location.href, 
+              type: "POST",
+              data: {nomo:$("#nomo").html(),
+                     enhavo: $("#enhavo").html(),
+                     pagxo_id:$("#pagxo_id").val(),
+                     ago: "konservi" },
+              success:traktuRespondon});    
+}
 
-//todo: se estas nova paĝo, ni devas sendi ankoraŭ nomon kaj daŭre ni devas plenigi pagxo_id
             
 function agu(sender) {
     if(! $("#pagxo_id").val()  ){
         //nova pagxo
-        $.post(window.location.href, {"nomo":$("#nomo").html(),"enhavo": $("#enhavo").html(),ago: "konservi" },traktuRespondon);        
+        konservu();
     }else{
-        $.post(window.location.href, {"celo":(sender.id) ,"pagxo_id": $("#pagxo_id").val(), "enhavo": $(sender).html(),ago: "konservi" },traktuRespondon);    
+        $.ajax(
+            { url :window.location.href,
+              type: "POST",
+              data: {celo:(sender.id) ,
+                     pagxo_id: $("#pagxo_id").val(), 
+                     enhavo: $(sender).html(),
+                     ago: "konservi" },
+              success:traktuRespondon});    
     }
 }
 
@@ -61,9 +77,12 @@ function traktuRespondon(data){
         
         if(data.id){
             $('#pagxo_id').val(data.id);
-        }                                
+        }
+            
+        //cxiam faru mesagxojn
+        $('#mesagxoj').html( data.mesagxoj );    
 	     
-        if( data.lasta ){
-            $('#lasta').html( data.lasta);    
+        if( data.sxangxita ){
+            $('#lasta_sxangxo').html( data.sxangxita);    
         }
 }
