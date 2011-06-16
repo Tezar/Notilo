@@ -10,6 +10,7 @@ class Pagxo implements arrayaccess{
     private $gxisdatigaro = Array();
     
     static $enFiltroj = Array();
+    static $redaktFiltroj = Array();
     static $elFiltroj = Array();
     
     /**
@@ -158,7 +159,47 @@ class Pagxo implements arrayaccess{
         }
         
         $this->gxisdatigaro = Array();
-    }    
+    }
+    
+    
+        //todo: popis
+    public function akiruIdojn(){
+        global $DB;
+        
+        if(!isset($this["id"])){ //se ni ne ekzitas ni na povas havi idojn
+            return Array();
+        }
+        
+        return $DB->pagxoj("patro = ?", $this["id"])->fetchPairs("vojo", "nomo");
+    }
+    
+    public function redaktilo(){
+        $teksto = $this->rikordo["enhavo"];
+        
+        foreach(self::$redaktFiltroj as $filtro){
+            $teksto = call_user_func($filtro,$teksto);             
+        }
+        
+        return $teksto; 
+    }
+    
+    
+    public function forvisxu(){
+        if(!isset($this["id"])){ //se ni ne ekzitas ni na povas havi idojn
+            return true;
+        }        
+        
+        $idoj = $this->akiruIdojn();
+        
+        if($kiom = count($idoj) > 0){
+            throw new PagxoException("Ne eblas forviŝi paĝon - ĝi havas idojn ($kiom)");
+        }
+        
+        
+        $this->rikordo->delete();
+                
+    }
+    
     
     /**
      * Pagxo::gxisdatiguVojojn()
@@ -180,26 +221,6 @@ class Pagxo implements arrayaccess{
         }
     }    
     
-    //todo: popis
-    public function akiruIdojn(){
-        global $DB;
-        
-        if(!isset($this["id"])){ //se ni ne ekzitas ni na povas havi idojn
-            return Array();
-        }
-        return $DB->pagxoj("patro = ?", $this["id"])->fetchPairs("vojo", "nomo");
-    }
-    
-    public function redaktilo(){
-        $teksto = $this["enhavo"];
-        
-        
-        foreach(self::$elFiltroj as $filtro){
-            $teksto = call_user_func($filtro,$teksto);             
-        }
-        
-        return $teksto; 
-    }
     
     /**
      * Pagxo::aldonuElFiltron()
@@ -212,6 +233,31 @@ class Pagxo implements arrayaccess{
             throw new PagxoException("Filtro devas esti alvokebla.");
         self::$elFiltroj[] = $filtro;
     }
+    
+    /**
+     * Pagxo::aldonuRedaktFiltron()
+     * aldonas enigan filtron 
+     * @param callback $filtro
+     * @return void
+     */
+    static function aldonuRedaktFiltron($filtro){
+        if( !is_callable($filtro) )
+            throw new PagxoException("Filtro devas esti alvokebla.");
+        self::$redaktFiltroj[] = $filtro;
+    }
+    
+    
+    /**
+     * Pagxo::aldonuEnFiltron()
+     * aldonas enigan filtron 
+     * @param callback $filtro
+     * @return void
+     */
+    static function aldonuEnFiltron($filtro){
+        if( !is_callable($filtro) )
+            throw new PagxoException("Filtro devas esti alvokebla.");
+        self::$enFiltroj[] = $filtro;
+    }    
     
         
 
@@ -281,10 +327,20 @@ class Pagxo implements arrayaccess{
      * @return
      */
     public function offsetGet($desxovo) {
-        if( isset($this->gxisdatigaro[$desxovo]) )
-            return $this->gxisdatigaro[$desxovo];
+        if( isset($this->gxisdatigaro[$desxovo]) ){
+            $redono = $this->gxisdatigaro[$desxovo];
+        }else{
+            $redono = $this->rikordo[$desxovo];
+        }            
         
-        return $this->rikordo[$desxovo];
+        if($desxovo === "enhavo"){
+            foreach(self::$elFiltroj as $filtro){
+                $redono = call_user_func($filtro,$redono);             
+            }
+        }
+        
+        return $redono;
+        
     }
     
 }

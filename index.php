@@ -17,16 +17,8 @@ include WEB_DIR."/app/Pagxo.php";
 
 
 
-
-
-function simplaTextArea($enhavo){
-    return "<textarea onkeypress='traktu(event)' onkeydown='traktu(event)' id='enhavo'>$enhavo</textarea>";
-}
-
-
-Pagxo::aldonuElFiltron("simplaTextArea");
-
-
+include WEB_DIR."/filtroj/texyFiltro.php";
+include WEB_DIR."/filtroj/simplaTextArea.php";
 
 
 while(true){
@@ -82,7 +74,7 @@ while(true){
     //---------------------------- ALIAJ PAGXO
     
     //menuero
-    $menuaro[] = Array('forviŝi','agordoj','forvisxi','return confirm("Ĉu vi certas?");');
+    $menuaro[] = Array('forviŝi','#','forvisxi','if(confirm("Ĉu vi certas?")){ forvisxu(); } return false;');
 
     //akiru pagxon per vojo(normale) aux per id (akirita trans la post, cxar nomo povis sxangxi)
     //aux priparu novan
@@ -111,34 +103,55 @@ while(true){
         $dataro = Array();
         
         switch($_POST["ago"]){
+            case "akiru": //kiam oni forĵetas ŝangoĵn
+                $dataro = Array( "nomo"=>$pagxo["nomo"], 
+                                 "loko" => "/".PREFIX_LIGILOJ.$pagxo["vojo"],
+                                 "enhavo"=>$pagxo["enhavo"],
+                                 "id"=>$pagxo["id"],
+                                 "sxangxita" => ($pagxo["sxangxita"]?date("H:i:s d.m.Y",$pagxo["sxangxita"]):"Nova"));
+            break;
+            
             case "konservi":
-                        $DB_DEBUG[] = Array("",var_export($_POST,true));
-                        //kiam estas kreita nova pagxo, ni ricevas kaj nomon kaj tekston kune
-                        if( ($_POST["celo"]=="nomo") or isset($_POST["nomo"]) ){
-                            $pagxo["nomo"] = strip_tags( isset($_POST["nomo"])? $_POST["nomo"] : $_POST["enhavo"] );    
-                        }
-                        
-                        if( ($_POST["celo"]=="enhavo") or ( !isset($_POST["celo"]) and isset($_POST["enhavo"]) ) ){
-                            $pagxo["enhavo"] = strip_tags( isset($_POST["enhavo"])? $_POST["enhavo"] : $_POST["enhavo"] );    
-                        }
-                        
-                        try{                        
-                            $pagxo->konservu();
-                        }catch(PagxoException $e){
-                            mesagxu("Okazis eraro, samnoma paĝo jam verŝajne ekzistas","eraro");
-                        }
-                       
-                        $dataro = Array("nomo"=>$pagxo["nomo"], 
-                                        //"loko" => "/".PREFIX_LIGILOJ.$pagxo["vojo"],
-                                        "enhavo"=>$pagxo["enhavo"],
-                                        "id"=>$pagxo["id"],
-                                        "sxangxita" => ($pagxo["sxangxita"]?date("H:i:s d.m.Y",$pagxo["sxangxita"]):"Nova"));
-                        
-                        break;
+                    $DB_DEBUG[] = Array("",var_export($_POST,true));
+                    //kiam estas kreita nova pagxo, ni ricevas kaj nomon kaj tekston kune
+                    if( isset($_POST["nomo"]) ){
+                        $pagxo["nomo"] = strip_tags($_POST["nomo"] );    
+                    }
+                    
+                    if( isset($_POST["enhavo"])  ){
+                        $pagxo["enhavo"] = $_POST["enhavo"];    
+                    }
+                    
+                    try{                        
+                        $pagxo->konservu();
+                    }catch(PagxoException $e){
+                        mesagxu("Okazis eraro, samnoma paĝo jam verŝajne ekzistas","eraro");
+                    }
+                   
+                    $dataro = Array("nomo"=>$pagxo["nomo"], 
+                                    "loko" => "/".PREFIX_LIGILOJ.$pagxo["vojo"],
+                                    "enhavo"=>$pagxo["enhavo"],
+                                    "id"=>$pagxo["id"],
+                                    "sxangxita" => ($pagxo["sxangxita"]?date("H:i:s d.m.Y",$pagxo["sxangxita"]):"Nova"));
+                    
+                    break;
+
+            case "forvisxi":
+                    try{
+                        $pagxo->forvisxu();
+                        $dataro["loko"] = "/".PREFIX_LIGILOJ;
+                        mesagxu("Sukcese forviŝita","sukceso");
+                    }catch(PagxoException $e){
+                        mesagxu($e->getMessage(),"eraro");    
+                    }
+                    
+            
+            
+                    break;
 
             case "redakti":
-                        $dataro["enhavo"] = $pagxo->redaktilo(); 
-                        break;
+                    $dataro["enhavo"] = $pagxo->redaktilo(); 
+                    break;
             case "idoj":
                         $idoj = $pagxo->akiruIdojn();
                         //break;   

@@ -3,7 +3,7 @@
                          url :window.location.href,
                          type: "POST",
                          success:traktuRespondon,
-                         error: function (a){ alert(a);} });   
+                         error: function (a,err){alert(a.responseText); alert(err);} });   
             $.tempolimo = 0;
             
             
@@ -15,8 +15,9 @@
     
     		
             $("#nomo").click(aldonuEdit);
+            
             $("#enhavo").dblclick(function(){
-                             $.ajax(  { beforeSend: function(){  $("#enhavo").fadeTo(250,0.1); },
+                             $.ajax(  { beforeSend: function(){  $("#enhavo").fadeTo(250,0.25); },
                                         data: {ago:"redakti"} }
                                     );    
                             })
@@ -35,7 +36,7 @@ var aldonuEdit = function(event){
                                     var el = e.target;
                                     if(e.keyCode=='13'){
                                         redonu(el, el.value);
-                                        agu( $("#nomo") );
+                                        konservuNomon();
                                         }
                                     else if(e.keyCode=='27'){
                                         redonu(el, el.origValoro );
@@ -83,28 +84,45 @@ var traktu = function(event) {
             	};
 
 /****************************************************/
-function agu(sender) {
-    if(! $("#pagxo_id").val()  ){
-        //nova pagxo
-        konservu();
-    }else{
-        $.ajax(
-            { data: {celo:(sender.attr('id') ) ,
-                     pagxo_id: $("#pagxo_id").val(), 
-                     enhavo: $(sender).html(),
-                     ago: "konservi" }});    
-    }
+function rekomencu(){
+    $.ajax({data:{ago:"akiru",pagxo_id:$("#pagxo_id").val()}});
 }
 
-function konservu(){
+function forvisxu(){
+    $.ajax({data:{ago:"forvisxi",pagxo_id:$("#pagxo_id").val()}});
+}
+
+
+function konservuNomon(){
         $.ajax(
             { data: {nomo:$("#nomo").html(),
-                     enhavo: $("#enhavo").html(),
                      pagxo_id:$("#pagxo_id").val(),
                      ago: "konservi" }});    
 }
 
-function traktuRespondon(data){
+
+function konservuEnhavon(enhavo,memgxisdatigu){
+    if(memgxisdatigu == null){
+        memgxisdatigu = true;
+    }
+    var sendi = {nomo:$("#nomo").html(), //ĉiam sendu nomond
+                 enhavo: enhavo ,
+                 pagxo_id:$("#pagxo_id").val(),
+                 ago: "konservi" };
+                 
+    var demando = {data:sendi}                 
+    if(memgxisdatigu==false)
+        demando.success = function(data){traktuRespondon(data,false);}; 
+    
+    $.ajax( demando );    
+}
+
+
+function traktuRespondon(data,memgxisdatigu){
+        if(memgxisdatigu == null){
+            memgxisdatigu = true;
+        }
+    
         
         data =  $.parseJSON(data);
 
@@ -112,18 +130,8 @@ function traktuRespondon(data){
             window.location.pathname = data.loko ;
             return;
         }
-                         
-        if( data.nomo ){
-            $('#nomo').html( data.nomo );
-            document.title = data.nomo;
-        }
-
-        if(data.enhavo){
-            $('#enhavo').fadeTo(100, 0.01, function () {
-                            $(this).html(data.enhavo).fadeTo(100, 1);
-                        });    
-        }
         
+                
         if(data.debug){
             $('#debug').fadeTo(100, 0.01, function () {
                             $(this).html(data.debug).fadeTo(100, 1);
@@ -142,4 +150,22 @@ function traktuRespondon(data){
         if( data.sxangxita ){
             $('#lasta_sxangxo').html( data.sxangxita);    
         }
+        
+        
+        
+        if( ! memgxisdatigu ){ //se ni nerajtas mem ĝisdatigi ni finas
+            return;
+        }
+                         
+        if( data.nomo ){
+            $('#nomo').html( data.nomo );
+            document.title = data.nomo;
+        }
+
+        if(data.enhavo){
+            $('#enhavo').fadeTo(100, 0.01, function () {
+                            $(this).html(data.enhavo).fadeTo(100, 1);
+                        });    
+        }
+
 }
