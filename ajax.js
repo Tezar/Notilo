@@ -2,6 +2,7 @@
             $.ajaxSetup({timeout: 4000,
                          url :window.location.href,
                          type: "POST",
+                         //todo: beforesend kiu aldonas ID de paĝo
                          success:traktuRespondon,
                          error: function (a,err){alert(a.responseText); alert(err);} });   
             $.tempolimo = 0;
@@ -84,12 +85,20 @@ var traktu = function(event) {
             	};
 
 /****************************************************/
+//reakiru datojn de servilo 
 function rekomencu(){
     $.ajax({data:{ago:"akiru",pagxo_id:$("#pagxo_id").val()}});
 }
 
+//provu forviŝi paĝon
 function forvisxu(){
     $.ajax({data:{ago:"forvisxi",pagxo_id:$("#pagxo_id").val()}});
+}
+
+
+//akiru idoj de servilo
+function akiruIdojn(){
+    $.ajax({data:{ago:"idoj",pagxo_id:$("#pagxo_id").val()}});
 }
 
 

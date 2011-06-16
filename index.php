@@ -79,7 +79,7 @@ while(true){
     //akiru pagxon per vojo(normale) aux per id (akirita trans la post, cxar nomo povis sxangxi)
     //aux priparu novan
     try{
-        $pagxo = new Pagxo( isset($_POST["pagxo_id"])?$_POST["pagxo_id"]:$vojo );
+        $pagxo = new Pagxo( !empty($_POST["pagxo_id"])?$_POST["pagxo_id"]:$vojo );
     }catch(PagxoException $e){ //...aux priparu novan
         //se oni okazais aliaeraro ol ke pagxo neekzistas nedauxrigu
         if($e->getCode() != Pagxo::NEEKZISTAS) throw $e;
@@ -92,6 +92,7 @@ while(true){
         
         mesagxu("Tiuĉi paĝo estas nova");
         
+        $DB_DEBUG[] = Array("vojeroj",implode("/",$vojeroj));
         if(!empty($vojeroj)){
             $pagxo["patro"] = implode("/",$vojeroj);
         }
@@ -110,6 +111,8 @@ while(true){
                                  "id"=>$pagxo["id"],
                                  "sxangxita" => ($pagxo["sxangxita"]?date("H:i:s d.m.Y",$pagxo["sxangxita"]):"Nova"));
             break;
+            
+            
             
             case "konservi":
                     $DB_DEBUG[] = Array("",var_export($_POST,true));
@@ -153,8 +156,16 @@ while(true){
                     $dataro["enhavo"] = $pagxo->redaktilo(); 
                     break;
             case "idoj":
-                        $idoj = $pagxo->akiruIdojn();
-                        //break;   
+                    $idoj = "<ul>";
+                        foreach( $pagxo->akiruIdojn() as $idduopo){
+                            list($vojo, $nomo) =$idduopo;
+                            $idoj .= "<li><a href='/".PREFIX_LIGILOJ."$vojo'>$nomo</a></li>";
+                        }
+                    $idoj .= "</ul>";    
+                        
+                    $dataro["idoj"] = $idoj; 
+                        
+                    break;   
                                        
             default:
                     mesagxu("Nekonata ago '{$_POST["ago"]}'", 'eraro');
@@ -173,7 +184,7 @@ while(true){
     $enhavo = "<h1>&raquo;<span id='nomo'>{$pagxo["nomo"]}</span></h1>";
     $enhavo .= "<div id='enhavo'>{$pagxo["enhavo"]}sdfasf<br/></div>";
     $enhavo .= "<div id='lasta_sxangxo'>".($pagxo["sxangxita"]?date("H:i:s d.m.Y",$pagxo["sxangxita"]):"Nova")."<br/></div>";
-    $enhavo .= "<input type='text' id='pagxo_id' value='{$pagxo["id"]}' />";
+    $enhavo .= "<input type='hidden' id='pagxo_id' value='{$pagxo["id"]}' />";
 
     break;
 }
