@@ -18,7 +18,7 @@
             $("#nomo").click(aldonuEdit);
             
             $("#enhavo").dblclick(function(){
-                             $.ajax(  { beforeSend: function(){  $("#enhavo").fadeTo(250,0.25); },
+                             $.ajax(  { beforeSend: function(){  $("#enhavo").fadeTo(80,0.25); },
                                         data: {ago:"redakti"} }
                                     );    
                             })
@@ -150,6 +150,13 @@ function traktuRespondon(data,memgxisdatigu){
         if(data.id){
             $('#pagxo_id').val(data.id);
         }
+        
+        if(data.idoj){
+            $('#idoj').fadeTo(100, 0.01, function () {
+                            $(this).html(data.idoj).fadeTo(100, 1);
+                        });  
+        }
+        
             
         //cxiam faru mesagxojn
         $('#mesagxoj').fadeTo(100, 0.01, function () {

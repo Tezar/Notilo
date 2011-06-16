@@ -15,6 +15,10 @@ include WEB_DIR."/app/Konektilo.php";
 include WEB_DIR."/app/Utilaj.php";
 include WEB_DIR."/app/Pagxo.php";
 
+////////////////////////////////////////////////////////////
+
+
+
 
 
 include WEB_DIR."/filtroj/texyFiltro.php";
@@ -100,7 +104,7 @@ while(true){
     
     
     if($_POST){
-        sleep(1); // por testkialoj
+        //sleep(1); // por testkialoj
         $dataro = Array();
         
         switch($_POST["ago"]){
@@ -127,6 +131,7 @@ while(true){
                     
                     try{                        
                         $pagxo->konservu();
+                         mesagxu("Sukcese konservita","sukceso");
                     }catch(PagxoException $e){
                         mesagxu("Okazis eraro, samnoma paĝo jam verŝajne ekzistas","eraro");
                     }
@@ -155,15 +160,15 @@ while(true){
             case "redakti":
                     $dataro["enhavo"] = $pagxo->redaktilo(); 
                     break;
+                    
             case "idoj":
-                    $idoj = "<ul>";
-                        foreach( $pagxo->akiruIdojn() as $idduopo){
-                            list($vojo, $nomo) =$idduopo;
+                    $idoj = "";
+                    foreach( $pagxo->akiruIdojn() as $vojo => $nomo){
                             $idoj .= "<li><a href='/".PREFIX_LIGILOJ."$vojo'>$nomo</a></li>";
-                        }
-                    $idoj .= "</ul>";    
-                        
-                    $dataro["idoj"] = $idoj; 
+                    }
+
+                                
+                    $dataro["idoj"] = empty($idoj)?"Neniaj idoj":"<ul>".$idoj."</ul>";
                         
                     break;   
                                        
@@ -181,10 +186,12 @@ while(true){
         
     }
     
+      
     $enhavo = "<h1>&raquo;<span id='nomo'>{$pagxo["nomo"]}</span></h1>";
-    $enhavo .= "<div id='enhavo'>{$pagxo["enhavo"]}sdfasf<br/></div>";
+    $enhavo .= "<div id='enhavo'>{$pagxo["enhavo"]}<br/></div>";
     $enhavo .= "<div id='lasta_sxangxo'>".($pagxo["sxangxita"]?date("H:i:s d.m.Y",$pagxo["sxangxita"]):"Nova")."<br/></div>";
     $enhavo .= "<input type='hidden' id='pagxo_id' value='{$pagxo["id"]}' />";
+    $enhavo .= "<div id='idoj'><a href='#' onclick='akiruIdojn(); return false;'>idoj&hellip;</a></div>";
 
     break;
 }
