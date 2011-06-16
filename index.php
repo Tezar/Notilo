@@ -15,6 +15,20 @@ include WEB_DIR."/app/Konektilo.php";
 include WEB_DIR."/app/Utilaj.php";
 include WEB_DIR."/app/Pagxo.php";
 
+
+
+
+
+function simplaTextArea($enhavo){
+    return "<textarea onkeypress='traktu(event)' onkeydown='traktu(event)' id='enhavo'>$enhavo</textarea>";
+}
+
+
+Pagxo::aldonuElFiltron("simplaTextArea");
+
+
+
+
 while(true){
     $vojo = trim($_SERVER["REQUEST_URI"],"/");
 
@@ -66,7 +80,9 @@ while(true){
 
 
     //---------------------------- ALIAJ PAGXO
-    $menuaro[] = Array('forviŝi','agordoj','forvisxi');
+    
+    //menuero
+    $menuaro[] = Array('forviŝi','agordoj','forvisxi','return confirm("Ĉu vi certas?");');
 
     //akiru pagxon per vojo(normale) aux per id (akirita trans la post, cxar nomo povis sxangxi)
     //aux priparu novan
@@ -91,7 +107,9 @@ while(true){
     
     
     if($_POST){
-        //todo: redoni json nur se estas AJAX demando
+        sleep(1); // por testkialoj
+        $dataro = Array();
+        
         switch($_POST["ago"]){
             case "konservi":
                         $DB_DEBUG[] = Array("",var_export($_POST,true));
@@ -110,27 +128,31 @@ while(true){
                             mesagxu("Okazis eraro, samnoma paĝo jam verŝajne ekzistas","eraro");
                         }
                        
-                     
-                        echo json_encode( Array("nomo"=>$pagxo["nomo"], 
-                                                "loko" => "/".PREFIX_LIGILOJ.SEOigu($pagxo["nomo"]),
-                                                "enhavo"=>$pagxo["enhavo"],
-                                                "id"=>$pagxo["id"],
-                                                "mesagxoj"=> mesagxoj(),
-                                                "sxangxita" => ($pagxo["sxangxita"]?date("H:i:s d.m.Y",$pagxo["sxangxita"]):"Nova"),
-                                                "debug" => kreuDebugTablon($DB_DEBUG) )); 
-                        exit;    
+                        $dataro = Array("nomo"=>$pagxo["nomo"], 
+                                        //"loko" => "/".PREFIX_LIGILOJ.$pagxo["vojo"],
+                                        "enhavo"=>$pagxo["enhavo"],
+                                        "id"=>$pagxo["id"],
+                                        "sxangxita" => ($pagxo["sxangxita"]?date("H:i:s d.m.Y",$pagxo["sxangxita"]):"Nova"));
                         
+                        break;
+
+            case "redakti":
+                        $dataro["enhavo"] = $pagxo->redaktilo(); 
                         break;
             case "idoj":
                         $idoj = $pagxo->akiruIdojn();
-                       
-                        if($_SERVER["HTTP_X_REQUESTED_WITH"] == 'XMLHttpRequest'){//<- demandita per AJAX
-                            echo json_encode( Array("idoj"=>$idoj));
-                            exit;    
-                        }
-                        break;                        
+                        //break;   
+                                       
+            default:
+                    mesagxu("Nekonata ago '{$_POST["ago"]}'", 'eraro');
+                    break;                             
             
         }
+        
+        $dataro["mesagxoj"] = mesagxoj();
+        $dataro["debug"] = kreuDebugTablon($DB_DEBUG) ;
+        echo json_encode($dataro); 
+        exit;    
 
         
     }
@@ -164,7 +186,6 @@ header('Content-Type: text/html; charset=utf-8');
 <body>
 <noscript><div class="msg eraro">Por uzado de tiuĉi aplikacio oni bezonas ŝaltitan JavaScript</div></noscript>
 <!-- <div class="eta" style="float: right;"><?= $_SERVER["REMOTE_ADDR"] ?></div> -->
-
 <div>
     <div id="menuo">
         <?
@@ -173,14 +194,11 @@ header('Content-Type: text/html; charset=utf-8');
             echo "<a ".($ligilo?"href='/".PREFIX_LIGILOJ.$ligilo."' ":"").($skripto?"onclick='$skripto'":"").">".($bildo?"<img src='/bild/$bildo.png' alt='$nomo' />":$nomo)."</a>\n";    
         }
         ?>
+        <img id='sxargilo' src="/bild/ajax-sxargilo.gif" />
     </div>
 </div>
 
 <div id="mesagxoj"><?= mesagxoj() ?></div>
-
-
-
-
 <?= $enhavo ?>
 
 <?
@@ -191,7 +209,10 @@ $i=0;
 echo "<hr /><div id='debug'><table style='clear:both;'>";
 echo kreuDebugTablon($DB_DEBUG);
 echo "</div>";
+
+
 ?>
+
 </body>
 </html>
 

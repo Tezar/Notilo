@@ -11,21 +11,12 @@ body{
     font-size: 13px;
 }
 
-div.redaktebla:focus {
-    outline: none;
-}
-
-    
-div#ujo{
-     overflow: auto;    
-}  
 
 div.eta{
     font-family: Arial;
     font-size:12px;
     color:gray;
 }
-
 
 h1{
     margin:0px auto 5px 0px;
@@ -47,6 +38,10 @@ input#nomo{
     width:400px;
 }
 
+
+#sxargilo{
+    display:none;
+}
 
 /* bazita de  http://css.dzone.com/news/css-message-boxes-different-me */
 .msg{

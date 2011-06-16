@@ -1,19 +1,30 @@
     $(function(){
-            $.ajaxSetup({timeout: 4000});   
+            $.ajaxSetup({timeout: 4000,
+                         url :window.location.href,
+                         type: "POST",
+                         success:traktuRespondon,
+                         error: function (a){ alert(a);} });   
             $.tempolimo = 0;
+            
+            
+            $("#sxargilo").ajaxStart(function(){
+                                        $(this).show(); })
+                          .ajaxComplete(function(){
+                                        $(this).hide();
+                            });
     
     		
             $("#nomo").click(aldonuEdit);
-            $("#enhavo").keydown(traktilo).keypress(traktilo);
             $("#enhavo").dblclick(function(){
-                            $(this).attr("contentEditable",'true'); 
+                             $.ajax(  { beforeSend: function(){  $("#enhavo").fadeTo(250,0.1); },
+                                        data: {ago:"redakti"} }
+                                    );    
                             })
             });
             
 
 
-//keydown(traktilo).keypress(traktilo);
-
+//aldonas redakteblan titolon 
 var aldonuEdit = function(event){
                 var valoro = $(event.target).text();
                 var patro = $(event.target).parent();
@@ -40,6 +51,7 @@ var aldonuEdit = function(event){
                 el.focus();
         }
         
+// redonas redakteblan titolon reen al h1titolo         
 var redonu = function (el, str ){
    var patro = $(el).parent();
    el.onblur = null ;
@@ -53,7 +65,7 @@ var redonu = function (el, str ){
 }            
 
 /****************************************************/
-var traktilo = function(event) {
+var traktu = function(event) {
                     if (!event) event = window.event;
                    	if (event.target) elemento = event.target;
                   	else if (event.srcElement) elemento = event.srcElement;
@@ -66,7 +78,7 @@ var traktilo = function(event) {
     
             		clearTimeout($.tempolimo);
                     
-            		$.tempolimo = setTimeout( function(){ agu(elemento); }, 800);
+            		$.tempolimo = setTimeout( function(){ agu($(elemento));  }, 800);
             		return true;
             	};
 
@@ -77,29 +89,24 @@ function agu(sender) {
         konservu();
     }else{
         $.ajax(
-            { url :window.location.href,
-              type: "POST",
-              data: {celo:(sender.attr('id') ) ,
+            { data: {celo:(sender.attr('id') ) ,
                      pagxo_id: $("#pagxo_id").val(), 
                      enhavo: $(sender).html(),
-                     ago: "konservi" },
-              success:traktuRespondon});    
+                     ago: "konservi" }});    
     }
 }
 
 function konservu(){
         $.ajax(
-            { url :window.location.href, 
-              type: "POST",
-              data: {nomo:$("#nomo").html(),
+            { data: {nomo:$("#nomo").html(),
                      enhavo: $("#enhavo").html(),
                      pagxo_id:$("#pagxo_id").val(),
-                     ago: "konservi" },
-              success:traktuRespondon});    
+                     ago: "konservi" }});    
 }
 
 function traktuRespondon(data){
-        data = $.parseJSON(data);
+        
+        data =  $.parseJSON(data);
 
         if(data.loko && data.loko !== window.location.pathname){
             window.location.pathname = data.loko ;

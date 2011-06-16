@@ -9,6 +9,8 @@ class Pagxo implements arrayaccess{
     private $rikordo = Array();
     private $gxisdatigaro = Array();
     
+    static $enFiltroj = Array();
+    static $elFiltroj = Array();
     
     /**
     * Pagxo::__construct()
@@ -188,7 +190,32 @@ class Pagxo implements arrayaccess{
         return $DB->pagxoj("patro = ?", $this["id"])->fetchPairs("vojo", "nomo");
     }
     
+    public function redaktilo(){
+        $teksto = $this["enhavo"];
+        
+        
+        foreach(self::$elFiltroj as $filtro){
+            $teksto = call_user_func($filtro,$teksto);             
+        }
+        
+        return $teksto; 
+    }
     
+    /**
+     * Pagxo::aldonuElFiltron()
+     * aldonas enigan filtron 
+     * @param callback $filtro
+     * @return void
+     */
+    static function aldonuElFiltron($filtro){
+        if( !is_callable($filtro) )
+            throw new PagxoException("Filtro devas esti alvokebla.");
+        self::$elFiltroj[] = $filtro;
+    }
+    
+        
+
+
     /**
      * Pagxo::akiruCxiujn()
      * redonas cxiujn idojn de patro
@@ -204,6 +231,13 @@ class Pagxo implements arrayaccess{
         }
         return $redono;   
     }
+    
+    
+    
+
+    
+    
+    
     
          /**
      * Pagxo::offsetSet()
@@ -252,6 +286,7 @@ class Pagxo implements arrayaccess{
         
         return $this->rikordo[$desxovo];
     }
+    
 }
 
 
