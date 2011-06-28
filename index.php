@@ -224,13 +224,15 @@ header('Content-Type: text/html; charset=utf-8');
 <head>
         <meta http-equiv="content-type" content="text/html; charset=utf-8" />
         <meta name="robots" content="noindex, nofollow" />
-        <!-- <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.4/jquery.min.js"></script> -->
-        <script type="text/javascript" src="/<?=PREFIX_LIGILOJ?>jquery.min.js"></script>
+        <?= file_exists("jquery.min.js")    //uzu lokan jquery nur se ekzistas
+                ?'<script type="text/javascript" src="/'.PREFIX_LIGILOJ.'jquery.min.js"></script>'
+                :'<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.4/jquery.min.js"></script>' ?>
+                
         <script type="text/javascript" src="/<?=PREFIX_LIGILOJ?>ajax.js"></script>
 
         <link rel="stylesheet" type="text/css" href="/<?=PREFIX_LIGILOJ?>styloj.css" /> 
 
-        <title><?= $nomo ?></title>
+        <title><?=$nomo?></title>
 </head>
 <body>
 <noscript><div class="msg eraro">Por uzado de tiuĉi aplikacio oni bezonas ŝaltitan JavaScript</div></noscript>
