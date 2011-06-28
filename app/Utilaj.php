@@ -57,18 +57,16 @@ function kreuDebugTablon($dataro){
  * @return void
  */
 function mesagxu($mesagxo, $typo="msg"){
-    global $_MESAGXOJ;
-    if(!isset($_MESAGXOJ)) $_MESAGXOJ = Array();
-    
-    $_MESAGXOJ[] = Array($typo, $mesagxo); 
+    if(!isset($_SESSION["mesagxoj"])) $_SESSION["mesagxoj"] = Array();
+
+    $_SESSION["mesagxoj"][] = Array($typo, $mesagxo); 
 }
     
 function mesagxoj(){
-    global $_MESAGXOJ;
-    if(!isset($_MESAGXOJ)) $_MESAGXOJ = Array();
+    if(!is_array($_SESSION["mesagxoj"])) return;
     
     $redono = "";
-    foreach($_MESAGXOJ as $du){
+    foreach($_SESSION["mesagxoj"] as $du){
         list($typo, $msg) = $du;
         
         //se neestas typo msg aldonu gxin
@@ -76,7 +74,7 @@ function mesagxoj(){
         
         $redono .= "<div class='$typo'>$msg</div>";
     }
-    
+    $_SESSION["mesagxoj"] = Array();
     
     return $redono;
 }

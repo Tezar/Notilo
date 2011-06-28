@@ -3,11 +3,24 @@
 
 define('WEB_DIR', dirname(__FILE__));
 
-
 //por pli facilago de mult-uzantaj sistemoj
 define('DB_DOSIERO',WEB_DIR.'\testdb');
-//se uzita devas havi finan '/'
-define('PREFIX_LIGILOJ', "");
+
+//se definita devas havi finan '/' (ekz: 'notilo/'), nedifinita => auxtomata detekcio
+//define('PREFIX_LIGILOJ', 'notilo/');
+
+
+
+
+
+////////////////////////////////////////////////////////////
+//automata detekcio
+if(!defined(PREFIX_LIGILOJ)){
+    $dosiero = basename(__FILE__);
+    $loko = $_SERVER["SCRIPT_NAME"];
+    $prefikso = substr($loko,1,strlen($loko)-strlen($dosiero)-1);
+    define('PREFIX_LIGILOJ', $prefikso);    
+}
 
 ////////////////////////////////////////////////////////////
 
@@ -17,8 +30,8 @@ include WEB_DIR."/app/Pagxo.php";
 
 ////////////////////////////////////////////////////////////
 
-
-
+//komenco de seanco
+session_start();
 
 
 include WEB_DIR."/filtroj/texyFiltro.php";
@@ -178,7 +191,12 @@ while(true){
             
         }
         
-        $dataro["mesagxoj"] = mesagxoj();
+        //if( $dataro["loko"] !)
+        
+        //lokon ni sendas nur kiam tio estas bezonata
+        if(isset($dataro["loko"]) && ("/".$vojoSeo == $dataro["loko"])) unset($dataro["loko"]);
+        //mesaĝojn ni sendas nur kiam ni neŝanĝas lokon
+        if(!isset($dataro["loko"]) ) $dataro["mesagxoj"] = mesagxoj();
         $dataro["debug"] = kreuDebugTablon($DB_DEBUG) ;
         echo json_encode($dataro); 
         exit;    
@@ -207,10 +225,10 @@ header('Content-Type: text/html; charset=utf-8');
         <meta http-equiv="content-type" content="text/html; charset=utf-8" />
         <meta name="robots" content="noindex, nofollow" />
         <!-- <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.4/jquery.min.js"></script> -->
-        <script type="text/javascript" src="/jquery.min.js"></script>
-        <script type="text/javascript" src="/ajax.js"></script>
+        <script type="text/javascript" src="/<?=PREFIX_LIGILOJ?>jquery.min.js"></script>
+        <script type="text/javascript" src="/<?=PREFIX_LIGILOJ?>ajax.js"></script>
 
-        <link rel="stylesheet" type="text/css" href="/styloj.css" /> 
+        <link rel="stylesheet" type="text/css" href="/<?=PREFIX_LIGILOJ?>styloj.css" /> 
 
         <title><?= $nomo ?></title>
 </head>
@@ -222,7 +240,7 @@ header('Content-Type: text/html; charset=utf-8');
         <?
         foreach($menuaro as $ero ){
             list($nomo, $ligilo, $bildo, $skripto) = $ero;
-            echo "<a ".($ligilo?"href='/".PREFIX_LIGILOJ.$ligilo."' ":"").($skripto?"onclick='$skripto'":"").">".($bildo?"<img src='/bild/$bildo.png' alt='$nomo' />":$nomo)."</a>\n";    
+            echo "<a ".($ligilo?"href='/".PREFIX_LIGILOJ.$ligilo."' ":"").($skripto?"onclick='$skripto'":"").">".($bildo?"<img src='/".PREFIX_LIGILOJ."bild/$bildo.png' alt='$nomo' />":$nomo)."</a>\n";    
         }
         ?>
         <img id='sxargilo' src="/bild/ajax-sxargilo.gif" />
