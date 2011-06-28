@@ -131,10 +131,9 @@ function traktuRespondon(data,memgxisdatigu){
         if(memgxisdatigu == null){
             memgxisdatigu = true;
         }
-    
         
         data =  $.parseJSON(data);
-
+        
         if(data.loko && data.loko !== window.location.pathname){
             window.location.pathname = data.loko ;
             return;

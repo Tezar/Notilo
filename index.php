@@ -4,7 +4,7 @@
 define('WEB_DIR', dirname(__FILE__));
 
 //por pli facilago de mult-uzantaj sistemoj
-define('DB_DOSIERO',WEB_DIR.'\testdb');
+define('DB_DOSIERO',WEB_DIR.'//testdb');
 
 //se definita devas havi finan '/' (ekz: 'notilo/'), nedifinita => auxtomata detekcio
 //define('PREFIX_LIGILOJ', 'notilo/');
@@ -22,16 +22,18 @@ if(!defined(PREFIX_LIGILOJ)){
     define('PREFIX_LIGILOJ', $prefikso);    
 }
 
-////////////////////////////////////////////////////////////
 
-include WEB_DIR."/app/Konektilo.php";
+//komenco de seanco
+session_start();
+
+////////////////////////////////////////////////////////////
 include WEB_DIR."/app/Utilaj.php";
+include WEB_DIR."/app/Konektilo.php";
 include WEB_DIR."/app/Pagxo.php";
 
 ////////////////////////////////////////////////////////////
 
-//komenco de seanco
-session_start();
+
 
 
 include WEB_DIR."/filtroj/texyFiltro.php";
@@ -72,8 +74,15 @@ while(true){
     } 
 
 
+    $menuaro = Array();
+
+    if( !isset($DB)){
+        break;
+    }
+
 
     //------------------------------------------------------- BAZA MENUO
+    
     $menuaro[] = Array('Ĉefa paĝo',' ','hejmo');
     $menuaro[] = Array('Agordoj','agordoj','agordoj');
 
@@ -194,7 +203,7 @@ while(true){
         //if( $dataro["loko"] !)
         
         //lokon ni sendas nur kiam tio estas bezonata
-        if(isset($dataro["loko"]) && ("/".$vojoSeo == $dataro["loko"])) unset($dataro["loko"]);
+        if(isset($dataro["loko"]) && ("/".PREFIX_LIGILOJ.$vojoSeo == $dataro["loko"])) unset($dataro["loko"]);
         //mesaĝojn ni sendas nur kiam ni neŝanĝas lokon
         if(!isset($dataro["loko"]) ) $dataro["mesagxoj"] = mesagxoj();
         $dataro["debug"] = kreuDebugTablon($DB_DEBUG) ;

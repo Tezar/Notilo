@@ -1,5 +1,16 @@
 <?php
 
+// debug informaro
+$DB_DEBUG = Array();
+
+function notormdebug($demando, $parametroj){
+    global $DB_DEBUG;
+    $DB_DEBUG[] = Array($demando,$parametroj);
+    return True;
+}
+
+
+
 /**
  * SEOigu()
  * faras novan cxenon amikeman al ligiloj
