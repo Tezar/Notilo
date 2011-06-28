@@ -9,7 +9,7 @@ Features (traduki)
 =======
 - funkcias ankaŭ en subdosierujoj
 - kreado de nova noto simple per entajpo de la nomo al retadreso
-
+- enigaj/eligaj filtroj (traduko de ligiloj, ĉapelitaj leteroj)
 
 
 Kiel uzi
@@ -19,12 +19,11 @@ ankoraŭ nefinita - rigardu kodon
 
 Fari
 =======
-- enigaj/eligaj filtroj
+- sekurigi
 
 Planita:
 ========
 - ebleco sekurigi aliron baze de IP/kuketoj
-- uzant ŝanĝeblaj redaktiloj (pura HTML, texy,...)
 - ebleco movigi paĝojn inter patroj
 - ebleco eksporti tutan db
 
