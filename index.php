@@ -36,6 +36,7 @@ include WEB_DIR."/app/Pagxo.php";
 
 //FILTROJ
 
+include WEB_DIR."/filtroj/cxapelitajLeteroj.php";
 include WEB_DIR."/filtroj/texyFiltro.php";
 include WEB_DIR."/filtroj/simplaTextArea.php";
 

@@ -9,9 +9,9 @@ class Pagxo implements arrayaccess{
     private $rikordo = Array();
     private $gxisdatigaro = Array();
     
-    static $enFiltroj = Array();
-    static $redaktFiltroj = Array();
-    static $elFiltroj = Array();
+    static $enFiltroj = Array();     //filtroj aplikitaj dum konservado
+    static $redaktFiltroj = Array(); //filtroj aplikitaj sur teksto sendita por redakti (plej ofte transformiĝo al redaktilo)
+    static $elFiltroj = Array();     //filtorj aplikitaj al eltajpita teksto
     
     /**
     * Pagxo::__construct()
@@ -294,10 +294,22 @@ class Pagxo implements arrayaccess{
      */
     public function offsetSet($desxovo, $valoro) {
         global $DB_DEBUG;
+
+       if($desxovo === "enhavo"){
+            foreach(self::$enFiltroj as $filtro){
+                $valoro = call_user_func($filtro,$valoro);             
+            }
+        }
+
         if($valoro != $this->rikordo[$desxovo]){
             $DB_DEBUG[] = Array("konservu $desxovo", $valoro);
             $this->gxisdatigaro[$desxovo] = $valoro;
         }
+        
+
+
+        
+        
     }
     
     /**
