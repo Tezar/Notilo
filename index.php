@@ -34,7 +34,7 @@ include WEB_DIR."/app/Pagxo.php";
 ////////////////////////////////////////////////////////////
 
 
-
+//FILTROJ
 
 include WEB_DIR."/filtroj/texyFiltro.php";
 include WEB_DIR."/filtroj/simplaTextArea.php";
@@ -83,7 +83,8 @@ while(true){
 
     //------------------------------------------------------- BAZA MENUO
     
-    $menuaro[] = Array('Ĉefa paĝo',' ','hejmo');
+    //titolo, ligilo, bildo, skripto, klavkombino
+    $menuaro[] = Array('Ĉefa paĝo','','hejmo',Null,'1');
     $menuaro[] = Array('Agordoj','agordoj','agordoj');
 
     
@@ -250,8 +251,8 @@ header('Content-Type: text/html; charset=utf-8');
     <div id="menuo">
         <?
         foreach($menuaro as $ero ){
-            list($nomo, $ligilo, $bildo, $skripto) = $ero;
-            echo "<a ".($ligilo?"href='/".PREFIX_LIGILOJ.$ligilo."' ":"").($skripto?"onclick='$skripto'":"").">".($bildo?"<img src='/".PREFIX_LIGILOJ."bild/$bildo.png' alt='$nomo' />":$nomo)."</a>\n";    
+            list($nomo, $ligilo, $bildo, $skripto, $klavkombino) = $ero;
+            echo "<a ".($ligilo!==Null?"href='/".PREFIX_LIGILOJ.$ligilo."' ":"").($skripto!==Null?"onclick='$skripto' ":"").($klavkombino!==Null?"accesskey='$klavkombino' ":"").">".($bildo?"<img src='/".PREFIX_LIGILOJ."bild/$bildo.png' alt='$nomo' />":$nomo)."</a>\n";    
         }
         ?>
         <img id='sxargilo' src="/bild/ajax-sxargilo.gif" />
